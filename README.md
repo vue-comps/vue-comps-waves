@@ -34,7 +34,7 @@ For examples see [`dev/`](dev/).
 | Name | type | default | description |
 | ---:| --- | ---| --- |
 | color | String | "black" | color of the effect |
-| speed | Number | 0.37 | sped of the effect |
+| speed | Number | 1 | speed of the effect |
 
 
 # Development
