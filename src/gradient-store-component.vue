@@ -1,13 +1,34 @@
 // out: ..
-<template lang="jade">
-svg(xmlns="http://www.w3.org/2000/svg",style="position:absolute;opacity:0;visibility:hidden;pointer-events:none")
+<template lang="pug">
+svg(
+  xmlns="http://www.w3.org/2000/svg"
+  style="position:absolute;opacity:0;visibility:hidden;pointer-events:none")
   defs
-    radialGradient(:id="hash" cx="50%" cy="50%" r="75%" v-for="(color,hash) in colors")
-      stop(offset="0%",style="stop-opacity:0.2;",:style="{stopColor:color}")
-      stop(offset="40%",style="stop-opacity:0.3;",:style="{stopColor:color}")
-      stop(offset="50%",style="stop-opacity:0.4;",:style="{stopColor:color}")
-      stop(offset="60%",style="stop-opacity:0.5;",:style="{stopColor:color}")
-      stop(offset="70%",style="stop-color:rgb(255,255,255);stop-opacity:0")
+    radialGradient(
+      v-bind:id="hash"
+      cx="50%"
+      cy="50%"
+      r="75%"
+      v-for="(color,hash) in colors")
+      stop(
+        offset="0%"
+        style="stop-opacity:0.2;"
+        v-bind:style="{stopColor:color}")
+      stop(
+        offset="40%"
+        style="stop-opacity:0.3;"
+        v-bind:style="{stopColor:color}")
+      stop(
+        offset="50%"
+        style="stop-opacity:0.4;"
+        v-bind:style="{stopColor:color}")
+      stop(
+        offset="60%"
+        style="stop-opacity:0.5;"
+        v-bind:style="{stopColor:color}")
+      stop(
+        offset="70%"
+        style="stop-color:rgb(255,255,255);stop-opacity:0")
 </template>
 
 <script lang="coffee">

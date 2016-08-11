@@ -1,14 +1,28 @@
 // out: ..
-<template lang="jade">
-div(:style="{position:'relative',overflow:'hidden',display:'inline-block',touchAction:'auto'}",v-touch:tap="show",@mouseup="release",@mousedown="show")
-  div(style="position:absolute;pointer-events:none;transform:translate(-50%,-50%);border-radius:50%;line-height:0",v-el:ripple-div)
+<template lang="pug">
+div(
+  v-bind:style="{position:'relative',overflow:'hidden',display:'inline-block',touchAction:'auto'}"
+  v-touch:tap="show"
+  @mouseup="release"
+  @mousedown="show"
+  )
+  div(
+    style="position:absolute;pointer-events:none;transform:translate(-50%,-50%);border-radius:50%;line-height:0"
+    v-el:ripple-div
+    )
     svg(
-      xmlns="http://www.w3.org/2000/svg",
-      height=10,
-      width=10,
+      xmlns="http://www.w3.org/2000/svg"
+      height=10
+      width=10
       style="position:relative;opacity:0;pointer-events:none;"
       )
-      rect(x="0",y="0",width="100%",height="100%",:fill="gradUrl")
+      rect(
+        x="0"
+        y="0"
+        width="100%"
+        height="100%"
+        v-bind:fill="gradUrl"
+        )
   slot
 </template>
 
@@ -19,7 +33,7 @@ module.exports =
 
   mixins: [
     require("vue-mixins/setCss")
-    require("vue-mixins/getVue")
+    require("vue-mixins/vue")
   ]
 
   props:
@@ -30,17 +44,20 @@ module.exports =
       type: Number
       default: 1
 
-  watch:
-    color: "processColor"
+  computed:
+    gradUrl: ->
+      return null unless @getId?
+      console.log "test"
+      return "url(#"+@getId(@color)+")"
+
 
   data: ->
+    getId: null
     gradUrl: null
     ripples: []
     debug: ""
 
   methods:
-    processColor: (val=@color) ->
-      @gradUrl = "url(#"+@getId(@color)+")"
     show: (e) ->
       return if e.pointerType == "mouse"
       isTouch = e.pointerType? and e.pointerType != "mouse"
@@ -87,8 +104,6 @@ module.exports =
         if lastRipple.timeouted
           @hide(lastRipple)
 
-  compiled: ->
-
-    @getId = GradientStore(@getVue()).getId
-    @processColor()
+  ready: ->
+    @getId = GradientStore(@Vue).getId
 </script>

@@ -1,17 +1,29 @@
-<template lang="jade">
+<template lang="pug">
 .container
   p
     a(href="https://github.com/vue-comps/vue-comps-waves/blob/master/dev/basic.vue") source
   waves
     button.btn black ripple
-  waves(color="blue",style="margin-left:20px")
+  waves(
+    color="blue"
+    style="margin-left:20px"
+    )
     button.btn blue ripple
 
-  waves(color="white",style="margin-left:20px")
+  waves(
+    color="white"
+    style="margin-left:20px"
+    )
     button.btn white ripple
   br
-  waves(color="red",style="width:100px;height:100px;background-color:blue")
-  waves(color="blue",style="margin-left:20px")
+  waves(
+    color="red"
+    style="width:100px;height:100px;background-color:blue"
+    )
+  waves(
+    color="blue"
+    style="margin-left:20px"
+    )
     div(style="width:100px;height:100px;background-color:red")
 </template>
 
@@ -19,11 +31,10 @@
 require "hammer-timejs"
 module.exports =
   mixins:[
-    require("vue-mixins/getVue")
+    require("vue-mixins/vue")
   ]
   beforeCompile: ->
-    Vue = @getVue()
-    Vue.use(require('vue-touch'))
+    @Vue.use(require('vue-touch'))
   components:
     "waves" : require "../src/waves.vue"
 
