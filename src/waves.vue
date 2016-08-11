@@ -47,9 +47,7 @@ module.exports =
   computed:
     gradUrl: ->
       return null unless @getId?
-      console.log "test"
       return "url(#"+@getId(@color)+")"
-
 
   data: ->
     getId: null
