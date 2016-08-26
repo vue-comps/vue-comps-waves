@@ -1,8 +1,7 @@
 # vue-comps-waves
 
 Material design click animation. Done with svg and `Velocity.js`.
-Depends on `vue-touch`.
-Very lightweight if `Velocity.js` and `vue-touch` are present.
+Very lightweight if `Velocity.js` is present.
 
 ### [Demo](https://vue-comps.github.io/vue-comps-waves)
 
@@ -23,18 +22,18 @@ components:
 ]
 ```
 ```html
-<waves>
-  <button>Click me!</button>
-</waves>
+<button>Click me!
+  <waves></waves>
+</button>
 ```
 
 For examples see [`dev/`](dev/).
 
 #### Props
-| Name | type | default | description |
-| ---:| --- | ---| --- |
-| color | String | "black" | color of the effect |
-| speed | Number | 1 | speed of the effect |
+Name | type | default | description
+---:| --- | ---| ---
+color | String | "black" | color of the effect
+speed | Number | 1 | speed of the effect
 
 
 # Development
@@ -44,6 +43,11 @@ npm install
 npm run dev
 ```
 Browse to `http://localhost:8080/`.
+
+## Changelog
+
+- 1.0.0  
+Usage changes to attach to parent instead of being the parent.  
 
 ## License
 Copyright (c) 2016 Paul Pflugradt

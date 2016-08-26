@@ -1,10 +1,7 @@
 // out: ..
 <template lang="pug">
 div(
-  v-bind:style="{position:'relative',overflow:'hidden',display:'inline-block',touchAction:'auto'}"
-  v-touch:tap="show"
-  @mouseup="release"
-  @mousedown="show"
+  v-bind:style="computedStyle"
   )
   div(
     style="position:absolute;pointer-events:none;transform:translate(-50%,-50%);border-radius:50%;line-height:0"
@@ -23,7 +20,6 @@ div(
         height="100%"
         v-bind:fill="gradUrl"
         )
-  slot
 </template>
 
 <script lang="coffee">
@@ -34,6 +30,8 @@ module.exports =
   mixins: [
     require("vue-mixins/setCss")
     require("vue-mixins/vue")
+    require("vue-mixins/style")
+    require("vue-mixins/onceDocument")
   ]
 
   props:
@@ -43,7 +41,8 @@ module.exports =
     speed:
       type: Number
       default: 1
-
+    style:
+      default: -> []
   computed:
     gradUrl: ->
       return null unless @getId?
@@ -54,19 +53,22 @@ module.exports =
     gradUrl: null
     ripples: []
     debug: ""
-
+    parentEl: null
+    sibling: false
+    mergeStyle: {
+      position:'absolute'
+    }
+    parentPositioned: false
   methods:
+
     show: (e) ->
-      return if e.pointerType == "mouse"
-      isTouch = e.pointerType? and e.pointerType != "mouse"
-      e = e.srcEvent if isTouch
-      if e.offsetX
-        x = e.offsetX
-        y = e.offsetY
-      else
-        pos = e.target.getBoundingClientRect()
-        x = e.x - pos.left
-        y = e.y - pos.top
+      unless @parentPositioned
+        @mergeStyle.top = @parentEl.offsetTop + "px"
+        @mergeStyle.left = @parentEl.offsetLeft + "px"
+        @mergeStyle.height = @parentEl.offsetHeight + "px"
+        @mergeStyle.width = @parentEl.offsetWidth + "px"
+      x = e.offsetX
+      y = e.offsetY
       size = Math.max(@$el.offsetWidth-x,@$el.offsetHeight-y,x,y)*3
       rippleDiv = @$els.rippleDiv.cloneNode(true)
       @setCss(rippleDiv,"top",y+"px")
@@ -79,16 +81,18 @@ module.exports =
         duration:duration
         easing:"easeIn"
         queue:false
-      if isTouch
-        setTimeout (=> @hide({rippleDiv:rippleDiv,duration:duration*1/2})),duration*1/2
-      else
-        ripple = {rippleDiv:rippleDiv,duration:duration*1/2,released: false,timeouted: false}
-        @ripples.push ripple
-        setTimeout (=>
-          ripple.timeouted = true
-          if ripple.released
-            @hide(ripple)
-        ),duration*1/2
+      ripple = {rippleDiv:rippleDiv,duration:duration*1/2,released: false,timeouted: false}
+      @ripples.push ripple
+      setTimeout (=>
+        ripple.timeouted = true
+        if ripple.released
+          @hide(ripple)
+      ),duration*1/2
+      @documentListener ?= @onceDocument "mouseup", =>
+        @release()
+        @documentListener = null
+        return true
+      return ripple
     hide: (ripple) ->
       Velocity ripple.rippleDiv.firstChild,{opacity:0},
         duration:ripple.duration
@@ -104,4 +108,37 @@ module.exports =
 
   ready: ->
     @getId = GradientStore(@Vue).getId
+    @parentEl = @$el.parentElement
+    @parentEl.addEventListener "mousedown", @show
+    parentStyle = getComputedStyle(@parentEl)
+
+    @parentPositioned = /relative|absolute|fixed/.test(parentStyle.getPropertyValue("position"))
+    style = {
+      position:'absolute'
+      overflow:'hidden'
+      touchAction:'auto'
+      pointerEvents:"none"
+      cursor: parentStyle.getPropertyValue("cursor")
+      zIndex: parentStyle.getPropertyValue("z-index")
+      boxSizing: "border-box"
+      top: 0
+      left: 0
+    }
+    unless @parentPositioned
+
+    else
+      style.bottom = 0
+      style.right = 0
+      style.marginTop = "-" + parentStyle.getPropertyValue("border-top-width")
+      style.marginBottom = "-" + parentStyle.getPropertyValue("border-bottom-width")
+      style.marginLeft = "-" + parentStyle.getPropertyValue("border-left-width")
+      style.marginRight = "-" + parentStyle.getPropertyValue("border-right-width")
+      if typeof InstallTrigger != 'undefined' # is firefox
+        style.top = Number(parentStyle.getPropertyValue("border-top-width").replace("px",""))/2+"px"
+        style.left = Number(parentStyle.getPropertyValue("border-left-width").replace("px",""))/2+"px"
+        style.bottom = -Number(parentStyle.getPropertyValue("border-top-width").replace("px",""))/2+"px"
+        style.right = -Number(parentStyle.getPropertyValue("border-left-width").replace("px",""))/2+"px"
+    @mergeStyle = style
+  beforeDestroy: ->
+    @parentEl.removeEventListener "mousedown",@show
 </script>
