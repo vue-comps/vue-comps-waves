@@ -140,5 +140,5 @@ module.exports =
         style.right = -Number(parentStyle.getPropertyValue("border-left-width").replace("px",""))/2+"px"
     @mergeStyle = style
   beforeDestroy: ->
-    @parentEl.removeEventListener "mousedown",@show
+    @parentEl?.removeEventListener "mousedown",@show
 </script>
