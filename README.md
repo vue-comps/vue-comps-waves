@@ -3,7 +3,7 @@
 Material design click animation. Done with svg and `Velocity.js`.
 Very lightweight if `Velocity.js` is present.
 
-### [Demo](https://vue-comps.github.io/vue-comps-waves)
+### [Demo](https://vue-comps.github.io/vue-comps-waves/#!/basic)
 
 # Install
 
